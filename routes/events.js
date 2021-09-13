@@ -11,7 +11,17 @@ router.get('/', async function (req, res, next) {
   }
 });
 
+router.get('/GetByDate', async function (req, res, next) {
+  try {
+    res.json(await events.getByDate(req.query.date));
+  } catch (err) {
+    console.error(`Error getting events `, err.message);
+    next(err);
+  }
+});
+
 router.post('/', async function (req, res, next) {
+  console.log('POST /')
   try {
     res.json(await events.create(req.body));
   } catch (err) {

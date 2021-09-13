@@ -16,11 +16,37 @@ async function getById(id) {
 async function getMultiple(page = 1) {
     const offset = helper.getOffset(page, config.listPerPage);
     const rows = await db.query(
-        `SELECT * FROM bet.events ORDER BY 1 DESC LIMIT ?,?`,
+        `SELECT * FROM bet.events WHERE date(Date) >= DATE(NOW() - INTERVAL 1 DAY) ORDER BY Date DESC LIMIT ?,?`,
         [offset, config.listPerPage]
     );
     const data = helper.emptyOrRows(rows);
     const meta = { page };
+
+    return {
+        data,
+        meta
+    }
+}
+
+async function getByDate(date) {
+    // var start = new Date(date).setHours(21);
+    // start = start.toISOString();
+    // var start = new Date('2021-09-01 21:00:00');
+    // start.setUTCHours(0, 0, 0, 0);
+
+    // var end = (new Date(date).setHours(-3)).toISOString();
+    // var end = new Date('2021-09-02 21:00:00');
+    // end.setUTCHours(23, 59, 59, 999);
+
+    // var datse = '2021-09-02';
+
+    const rows = await db.query(
+        // `SELECT * FROM bet.events WHERE date BETWEEN DATE_ADD(DATE_ADD(?,interval -1 day),interval 21 hour) AND DATE_ADD(?,interval 21 hour) ORDER BY 1 DESC`,
+        `SELECT * FROM bet.events WHERE date BETWEEN ? AND DATE_ADD(?,interval 24 hour) ORDER BY 1 DESC`,
+        [date, date]
+    );
+    const data = helper.emptyOrRows(rows);
+    const meta = { date };
 
     return {
         data,
@@ -96,6 +122,7 @@ async function remove(id) {
 
 module.exports = {
     getMultiple,
+    getByDate,
     create,
     update,
     remove
