@@ -85,21 +85,6 @@ async function update(id, event) {
     const data = helper.emptyOrRows(rows);
 
     let message = data;
-    // const result = await db.query(
-    //     `UPDATE bet.events 
-    //   SET type=?, date=?, details=?
-    //   WHERE id=?`,
-    //     [
-    //         event.type, event.date,
-    //         (event.details != undefined ? event.details : null), id
-    //     ]
-    // );
-
-    // let message = 'Error updating event';
-
-    // if (result.affectedRows) {
-    //     message = 'event updated successfully';
-    // }
 
     return { message };
 }
@@ -119,11 +104,31 @@ async function remove(id) {
     return { message };
 }
 
+async function updateDate(id, event) {
+
+    const result = await db.query(
+        `UPDATE bet.events SET date = ? WHERE id = ?`,
+        [
+            event.datetime,
+            id
+        ]
+    );
+
+    let message = 'Error creating event ';
+
+    if (result.affectedRows) {
+        message = 'Event updated successfully';
+    }
+
+    return { message };
+}
+
 
 module.exports = {
     getMultiple,
     getByDate,
     create,
     update,
-    remove
+    remove,
+    updateDate
 }

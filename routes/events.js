@@ -48,4 +48,15 @@ router.delete('/:id', async function (req, res, next) {
   }
 });
 
+router.post('/updateDate/:id', async function (req, res, next) {
+  console.log('POST /')
+  try {
+    res.json(await events.updateDate(req.params.id, req.body));
+  } catch (err) {
+    console.error(`Error updating events`, err.message);
+    next(err);
+  }
+});
+
+
 module.exports = router;
